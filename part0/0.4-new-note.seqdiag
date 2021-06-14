@@ -1,0 +1,17 @@
+note over browser: browser packages data\n Name: note\n Content: So many people.
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note
+note over server: server resolves the data \n and add content and date to notes
+server-->browser: return 302 with location /exampleapp/notes
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/notes
+server-->browser: HTML Code
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.css
+server-->browser: main.css
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.js
+server-->browser: main.js
+
+note over browser: browser starts executing js-code \nthat requests JSON data from server
+
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/data.json
+server-->browser: [{ content: "⠄⠄⣰⣾⣿⣿⣿⠿⠿⢿⣿⣿...", date: "2021-06-13T17..." }, ...]
+
+note over browser: browser executes the event handler\nthat renders notes to display
