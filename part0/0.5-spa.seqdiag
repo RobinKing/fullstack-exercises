@@ -1,0 +1,13 @@
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/spa
+server-->browser: HTML Code
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.css
+server-->browser: main.css
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/spa.js
+server-->browser: spa.js
+
+note over browser: browser starts executing js-code \nthat opens a request to /exampleapp/data.json
+
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/data.json
+server-->browser: [{ content: "hello","date":"2021-06-13T19..." }, ...]
+
+note over browser: browser builds the notes array with received JSON data\n then redraws the notes class in document
