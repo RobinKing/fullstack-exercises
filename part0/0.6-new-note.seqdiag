@@ -1,0 +1,4 @@
+note over browser: browser executing js-code: \n that packages a new note and push it to notes array \n and then redraws the notes class in document
+note over browser: browser convert the new note to JSON string 
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+server-->browser: return 201 with message: note created
