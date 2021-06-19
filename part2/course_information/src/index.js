@@ -9,30 +9,28 @@ const Header = ({ course }) => {
 
 const Total = ({ course }) => {
   const sum = course.parts[0].exercises + course.parts[1].exercises + course.parts[2].exercises
-  return(
+  return (
     <p>Number of exercises {sum}</p>
-  ) 
+  )
 }
 
 const Part = (props) => {
   return (
     <p>
       {props.part.name} {props.part.exercises}
-    </p>    
+    </p>
   )
 }
 
 const Content = ({ course }) => {
   return (
     <div>
-      <Part part={course.parts[0]} />
-      <Part part={course.parts[1]} />
-      <Part part={course.parts[2]} />
+      {course.parts.map((part) => <Part key={part.id} part={part} />)}
     </div>
   )
 }
 
-const Course = ({course}) => {
+const Course = ({ course }) => {
   return (
     <div>
       <Header course={course} />
@@ -65,8 +63,8 @@ const App = () => {
   }
 
 
-    return <Course course={course} />
- 
+  return <Course course={course} />
+
 }
 
 ReactDOM.render(<App />, document.getElementById('root'))
