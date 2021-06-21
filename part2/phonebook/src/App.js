@@ -25,7 +25,6 @@ const App = () => {
             value={newName}
             onChange={(event) => setNewName(event.target.value)}
           />
-          <div>debug:{newName}</div>
         </div>
         <div>
           <button
