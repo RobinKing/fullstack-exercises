@@ -9,6 +9,7 @@ const App = () => {
   ])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [newFilter, setNewFilter] = useState('')
 
   const addPerson = (event) => {
     event.preventDefault()
@@ -26,33 +27,33 @@ const App = () => {
       alert(`${newName} is already added to phonebook`)
   }
 
+  const personsToShow = persons.filter((person) => person.name.toLowerCase().includes(newFilter.toLowerCase()))
+  console.log(personsToShow);
+
   return (
     <div>
       <h2>Phonebook</h2>
+      filter shown with <input value={newFilter}
+        onChange={(event) => setNewFilter(event.target.value)} />
+      <h2>add a new</h2>
       <form>
         <div>
-          name: <input
-            value={newName}
-            onChange={(event) => setNewName(event.target.value)}
-          />
+          name: <input value={newName}
+            onChange={(event) => setNewName(event.target.value)} />
         </div>
         <div>
-          number: <input
-            value={newNumber}
-            onChange={(event) => setNewNumber(event.target.value)}
-          />
+          number: <input value={newNumber}
+            onChange={(event) => setNewNumber(event.target.value)} />
         </div>
         <div>
-          <button
-            type="submit"
+          <button type="submit"
             onClick={addPerson}
           >add</button>
         </div>
       </form>
       <h2>Numbers</h2>
-      {persons.map((person) => (
+      {personsToShow.map((person) =>
         <p key={person.name}>{person.name} {person.number}</p>
-      )
       )}
     </div>
   )
