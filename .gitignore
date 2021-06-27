@@ -1,5 +1,5 @@
 # Ignore lock file
-*yarn.lock
+#*yarn.lock
 ## Ignore node_modules
 node_modules/*
 ## Ignore Visual Studio temporary files, build results, and
