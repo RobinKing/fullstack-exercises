@@ -2,27 +2,39 @@ import React, { useState, useEffect } from "react"
 import axios from 'axios'
 
 const Country = ({ country }) => {
+  if (country.length === 0)
+    return (<></>)
+  else {
+    return (
+      <>
+        <h1>{country.name}</h1>
+        <p>capital {country.capital}</p>
+        <p>population {country.population}</p>
+        <h2>languages</h2>
+        <ul>
+          {country.languages.map(language =>
+            <li key={language.name}>{language.name}</li>
+          )}
+        </ul>
+        <img src={country.flag} alt="flag" height="200"></img>
+      </>
+    )
+  }
+}
+
+const Button = ({ country , setCountryToShow}) => {
   return (
     <>
-      <h1>{country.name}</h1>
-      <p>capital {country.capital}</p>
-      <p>population {country.population}</p>
-      <h2>languages</h2>
-      <ul>
-        {country.languages.map(language =>
-          <li key={language.name}>{language.name}</li>
-        )}
-      </ul>
-      <img src={country.flag} alt="flag" height="200"></img>
+      <button onClick={()=> setCountryToShow(country)}>show</button>
     </>
   )
 }
 
-const Countries = ({ countries, filter }) => {
+const Countries = ({ countries, filter, setCountryToShow }) => {
   const countriesToShow = countries.filter(country =>
     country.name.toLowerCase().includes(filter.toLowerCase())
   )
-  // console.log(countriesToShow)
+
   if (countriesToShow.length > 10) {
     return (
       <p>Too many matches, specify another filter</p>
@@ -31,14 +43,14 @@ const Countries = ({ countries, filter }) => {
     return (
       <>
         {countriesToShow.map(country =>
-          <p>{country.name}</p>
+          <p key={country.name}>{country.name}<Button country={country} setCountryToShow={setCountryToShow}/></p>
         )}
       </>
     )
   } else if (countriesToShow.length === 1) {
+    setCountryToShow(countriesToShow[0])
     return (
       <>
-        <Country country={countriesToShow[0]} />
       </>
     )
   } else {
@@ -60,6 +72,7 @@ const Filter = ({ filter, handleFilterChange }) => {
 const App = () => {
   const [countries, setCountries] = useState([])
   const [filter, setFilter] = useState('')
+  const [countryToShow, setCountryToShow] = useState([])
 
   useEffect(() => {
     axios.get('https://restcountries.eu/rest/v2/all').then(response => {
@@ -67,12 +80,16 @@ const App = () => {
     })
   }, [])
 
-  const handleFilterChange = (event) => (setFilter(event.target.value))
+  const handleFilterChange = (event) => {
+    setCountryToShow([])
+    setFilter(event.target.value)
+  }
   // ...
   return (
     <>
       <Filter filter={filter} handleFilterChange={handleFilterChange} />
-      <Countries countries={countries} filter={filter} />
+      <Countries countries={countries} filter={filter} setCountryToShow={setCountryToShow} />
+      <Country country={countryToShow} />
     </>
   )
 }
