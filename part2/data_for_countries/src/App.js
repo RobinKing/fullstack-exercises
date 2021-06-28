@@ -17,15 +17,40 @@ const Country = ({ country }) => {
           )}
         </ul>
         <img src={country.flag} alt="flag" height="200"></img>
+        <Weather city={country.capital} />
       </>
     )
   }
 }
 
-const Button = ({ country , setCountryToShow}) => {
+const Weather = ({ city }) => {
+  const [weather, setWeather] = useState([])
+  const api_key = process.env.REACT_APP_API_KEY
+  useEffect(() => {
+    axios.get('http://api.weatherstack.com/current?access_key=' + api_key + '&query=' + city)
+      .then(response => {
+        setWeather(response.data)
+      })
+  }, [city])
+  if (weather.length === 0)
+    return (<></>)
+  else {
+    console.log(weather)
+    return (
+      <>
+        <h2>Weather in {city}</h2>
+        <p>temperature: {weather.current.temperature}</p>
+        <img src={weather.current.weather_icons[0]} alt={weather.current.weather_descriptions[0]}></img>
+        <p>wind:{weather.current.wind_speed} direction {weather.current.wind_dir}</p>
+      </>
+    )
+  }
+}
+
+const Button = ({ country, setCountryToShow }) => {
   return (
     <>
-      <button onClick={()=> setCountryToShow(country)}>show</button>
+      <button onClick={() => setCountryToShow(country)}>show</button>
     </>
   )
 }
@@ -43,7 +68,7 @@ const Countries = ({ countries, filter, setCountryToShow }) => {
     return (
       <>
         {countriesToShow.map(country =>
-          <p key={country.name}>{country.name}<Button country={country} setCountryToShow={setCountryToShow}/></p>
+          <p key={country.name}>{country.name}<Button country={country} setCountryToShow={setCountryToShow} /></p>
         )}
       </>
     )
@@ -84,7 +109,7 @@ const App = () => {
     setCountryToShow([])
     setFilter(event.target.value)
   }
-  // ...
+
   return (
     <>
       <Filter filter={filter} handleFilterChange={handleFilterChange} />
