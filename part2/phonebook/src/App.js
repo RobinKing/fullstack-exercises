@@ -18,8 +18,9 @@ const App = () => {
   const filterChanged = (event) => setNewFilter(event.target.value)
   const addPerson = (event) => {
     event.preventDefault()
+    const findPerson = persons.find(p => p.name === newName)
 
-    if (-1 === persons.findIndex((p) => p.name === newName)) {
+    if (!findPerson) {
       const personObject = {
         name: newName,
         number: newNumber
@@ -31,8 +32,17 @@ const App = () => {
       setNewName('')
       setNewNumber('')
     }
-    else
-      alert(`${newName} is already added to phonebook`)
+    else {
+      if (window.confirm(
+        `${newName} is already added to phonebook, replace the old number with a new one?`
+      )) {
+        const id = findPerson.id
+        const newPerson = { ...findPerson, number: newNumber }
+        personService
+          .update(id, newPerson)
+          .then(response => setPersons(persons.map(p => p.id !== id ? p : newPerson)))
+      }
+    }
   }
 
   return (
