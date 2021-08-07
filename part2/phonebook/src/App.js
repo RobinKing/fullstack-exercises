@@ -49,7 +49,7 @@ const App = () => {
 
       <h2>Numbers</h2>
 
-      <Persons persons={persons} newFilter={newFilter} />
+      <Persons persons={persons} newFilter={newFilter} setPersons={setPersons} />
     </div>
   )
 }
@@ -85,13 +85,27 @@ const PersonForm = ({ newName, handleNameChange, newNumber, handleNumbeChange, h
   )
 }
 
-const Persons = ({ persons, newFilter }) => {
+const Persons = ({ persons, newFilter, setPersons }) => {
   const personsToShow = persons.filter((person) => person.name.toLowerCase().includes(newFilter.toLowerCase()))
+  const deletePerson = (id, name) => {
+    if (window.confirm(`Delete ${name}`)) {
+      personService
+        .remove(id)
+        .then(response => {
+          if (response === 200) {
+            setPersons(persons.filter(n => n.id !== id))
+          }
+        })
+        .catch(error => console.log(error))
+    }
+  }
 
   return (
     <>
       {personsToShow.map((person) =>
-        <p key={person.name}>{person.name} {person.number}</p>
+        <p key={person.name}>
+          {person.name} {person.number} <button onClick={() => { deletePerson(person.id, person.name) }}>delete</button>
+        </p>
       )}
     </>
   )
