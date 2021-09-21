@@ -1,11 +1,34 @@
 import React, { useState, useEffect } from 'react'
 import personService from './services/persons'
 
+const Notification = ({message}) => {
+  const notificationStyle = {
+    color: 'green',
+    background: 'lightgray',
+    borderStyle: 'solid',
+    borderRadius: 5,
+    fontSize: 20,
+    padding: 10,
+    marginBottom: 5,
+//    paddingTop: 3
+  }
+  if (null === message) {
+    return null
+  } else {
+    return (
+      <div style={notificationStyle} >
+        {message}
+      </div>
+    )
+  }
+}
+
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
+  const [promptMessage, setPromptMessage] = useState('')
 
   useEffect(() => {
     personService
@@ -29,6 +52,10 @@ const App = () => {
       personService
         .create(personObject)
         .then(response => setPersons(persons.concat(response)))
+        .then(response => {
+          setPromptMessage(`Added ${newName}`)
+          setTimeout(()=>{setPromptMessage(null)}, 3000)
+        })
       setNewName('')
       setNewNumber('')
     }
@@ -41,6 +68,10 @@ const App = () => {
         personService
           .update(id, newPerson)
           .then(response => setPersons(persons.map(p => p.id !== id ? p : newPerson)))
+          .then(response => {
+            setPromptMessage(`Updated ${newName}`)
+            setTimeout(()=>{setPromptMessage(null)}, 3000)
+          })
       }
     }
   }
@@ -48,6 +79,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={promptMessage} />
 
       <Filter newFilter={newFilter} handleChange={filterChanged} />
 
@@ -106,7 +138,9 @@ const Persons = ({ persons, newFilter, setPersons }) => {
             setPersons(persons.filter(n => n.id !== id))
           }
         })
-        .catch(error => console.log(error))
+        .catch(error => {
+          console.log(error)
+        })
     }
   }
 
