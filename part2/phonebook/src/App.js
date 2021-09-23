@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import personService from './services/persons'
 
-const Notification = ({message}) => {
-  const notificationStyle = {
+const Notification = ({ message, promptType }) => {
+  const promptStyle = {
     color: 'green',
     background: 'lightgray',
     borderStyle: 'solid',
@@ -10,13 +10,20 @@ const Notification = ({message}) => {
     fontSize: 20,
     padding: 10,
     marginBottom: 5,
-//    paddingTop: 3
   }
-  if (null === message) {
+  const errorStyle = { ...promptStyle, color: 'red' }
+
+  if (promptType === 'empty' || (null === message)) {
     return null
-  } else {
+  } else if (promptType === 'prompt') {
     return (
-      <div style={notificationStyle} >
+      <div style={promptStyle} >
+        {message}
+      </div>
+    )
+  } else {  // promptType === 'error'
+    return (
+      <div style={errorStyle} >
         {message}
       </div>
     )
@@ -29,6 +36,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
   const [promptMessage, setPromptMessage] = useState('')
+  const [promptType, setPromptType] = useState('empty')
 
   useEffect(() => {
     personService
@@ -53,8 +61,9 @@ const App = () => {
         .create(personObject)
         .then(response => setPersons(persons.concat(response)))
         .then(response => {
+          setPromptType('prompt')
           setPromptMessage(`Added ${newName}`)
-          setTimeout(()=>{setPromptMessage(null)}, 3000)
+          setTimeout(() => { setPromptMessage(null) }, 3000)
         })
       setNewName('')
       setNewNumber('')
@@ -70,8 +79,18 @@ const App = () => {
           .then(response => setPersons(persons.map(p => p.id !== id ? p : newPerson)))
           .then(response => {
             setPromptMessage(`Updated ${newName}`)
-            setTimeout(()=>{setPromptMessage(null)}, 3000)
+            setTimeout(() => { setPromptMessage(null) }, 3000)
           })
+          .catch(error => {
+            setPromptType('error')
+            setPromptMessage(`Information of ${newName} is already removed from server!`)
+            setTimeout(() => { setPromptMessage(null) }, 3000)
+          })
+          .finally(response => {
+            personService.getAll()
+              .then(response => setPersons(response))
+          }
+          )
       }
     }
   }
@@ -79,7 +98,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={promptMessage} />
+      <Notification message={promptMessage} promptType={promptType} />
 
       <Filter newFilter={newFilter} handleChange={filterChanged} />
 
